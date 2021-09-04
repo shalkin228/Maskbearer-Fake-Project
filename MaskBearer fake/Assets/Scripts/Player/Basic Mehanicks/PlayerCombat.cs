@@ -40,7 +40,6 @@ public class PlayerCombat : MonoBehaviour
         if (_rigidbody2D.velocity.y > 0.01f || _rigidbody2D.velocity.y < -0.01f)
         {
             _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, 1);
-            print(1);
         }
 
         foreach(Collider2D collidingObject in collidingObjects)

@@ -65,6 +65,14 @@ public class @Player : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""2bfa965e-bec7-426b-b755-0817544a0b40"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -115,7 +123,7 @@ public class @Player : IInputActionCollection, IDisposable
                 {
                     ""name"": ""negative"",
                     ""id"": ""3bee5513-a988-46cd-86a6-b6cfef86dfe7"",
-                    ""path"": ""<Keyboard>/a"",
+                    ""path"": ""<Keyboard>/leftArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -126,7 +134,7 @@ public class @Player : IInputActionCollection, IDisposable
                 {
                     ""name"": ""positive"",
                     ""id"": ""ef580fbd-910b-4459-9552-557e92ba2578"",
-                    ""path"": ""<Keyboard>/d"",
+                    ""path"": ""<Keyboard>/rightArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -159,7 +167,7 @@ public class @Player : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""9f1c4b3d-f287-4505-ba66-370f59b462d4"",
-                    ""path"": ""<Keyboard>/s"",
+                    ""path"": ""<Keyboard>/downArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -181,7 +189,7 @@ public class @Player : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""553420bf-70b4-4ade-a7a9-70dda9c69ff4"",
-                    ""path"": ""<Keyboard>/w"",
+                    ""path"": ""<Keyboard>/upArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -243,6 +251,28 @@ public class @Player : IInputActionCollection, IDisposable
                     ""action"": ""Exit"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""114af09b-2d21-4acf-831f-3d09bb74834a"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3fbe3a7c-e91f-4f0f-ba7a-f39e55bd238f"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -257,6 +287,7 @@ public class @Player : IInputActionCollection, IDisposable
         m_PlayerInput_LookUp = m_PlayerInput.FindAction("LookUp", throwIfNotFound: true);
         m_PlayerInput_Hit = m_PlayerInput.FindAction("Hit", throwIfNotFound: true);
         m_PlayerInput_Exit = m_PlayerInput.FindAction("Exit", throwIfNotFound: true);
+        m_PlayerInput_Dash = m_PlayerInput.FindAction("Dash", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -312,6 +343,7 @@ public class @Player : IInputActionCollection, IDisposable
     private readonly InputAction m_PlayerInput_LookUp;
     private readonly InputAction m_PlayerInput_Hit;
     private readonly InputAction m_PlayerInput_Exit;
+    private readonly InputAction m_PlayerInput_Dash;
     public struct PlayerInputActions
     {
         private @Player m_Wrapper;
@@ -322,6 +354,7 @@ public class @Player : IInputActionCollection, IDisposable
         public InputAction @LookUp => m_Wrapper.m_PlayerInput_LookUp;
         public InputAction @Hit => m_Wrapper.m_PlayerInput_Hit;
         public InputAction @Exit => m_Wrapper.m_PlayerInput_Exit;
+        public InputAction @Dash => m_Wrapper.m_PlayerInput_Dash;
         public InputActionMap Get() { return m_Wrapper.m_PlayerInput; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -349,6 +382,9 @@ public class @Player : IInputActionCollection, IDisposable
                 @Exit.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnExit;
                 @Exit.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnExit;
                 @Exit.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnExit;
+                @Dash.started -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnDash;
+                @Dash.performed -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnDash;
+                @Dash.canceled -= m_Wrapper.m_PlayerInputActionsCallbackInterface.OnDash;
             }
             m_Wrapper.m_PlayerInputActionsCallbackInterface = instance;
             if (instance != null)
@@ -371,6 +407,9 @@ public class @Player : IInputActionCollection, IDisposable
                 @Exit.started += instance.OnExit;
                 @Exit.performed += instance.OnExit;
                 @Exit.canceled += instance.OnExit;
+                @Dash.started += instance.OnDash;
+                @Dash.performed += instance.OnDash;
+                @Dash.canceled += instance.OnDash;
             }
         }
     }
@@ -383,5 +422,6 @@ public class @Player : IInputActionCollection, IDisposable
         void OnLookUp(InputAction.CallbackContext context);
         void OnHit(InputAction.CallbackContext context);
         void OnExit(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
     }
 }

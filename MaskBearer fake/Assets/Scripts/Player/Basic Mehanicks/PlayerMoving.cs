@@ -14,6 +14,8 @@ public class PlayerMoving : MonoBehaviour
     private GroundCheck _groundCheck;
     private Animator _animator;
 
+    public bool isDashing;
+
     private void Start()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
@@ -40,7 +42,7 @@ public class PlayerMoving : MonoBehaviour
 
     private void Update()
     {
-        if (_isMoving && _dir == Direction.Right)
+        if (_isMoving && _dir == Direction.Right && !isDashing)
         {
             _rigidbody2D.drag = 0f;
             if (_rigidbody2D.velocity.x < _movingMaxSpeed)
@@ -49,7 +51,7 @@ public class PlayerMoving : MonoBehaviour
 
             transform.rotation = Quaternion.identity;
         }
-        else if (_isMoving && _dir == Direction.Left)
+        else if (_isMoving && _dir == Direction.Left && !isDashing)
         {
             _rigidbody2D.drag = 0f;
             if (_rigidbody2D.velocity.x > -_movingMaxSpeed)
@@ -79,7 +81,7 @@ public class PlayerMoving : MonoBehaviour
 
     public void Jump()
     {
-        if (_groundCheck.isGrounded)
+        if (_groundCheck.isGrounded && !isDashing)
         {
             _rigidbody2D.drag = 0;
 
@@ -91,7 +93,7 @@ public class PlayerMoving : MonoBehaviour
 
     public void StopJump()
     {
-        if(_rigidbody2D.velocity.y > 0)
+        if(_rigidbody2D.velocity.y > 0 && !isDashing)
         {
             _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, _rigidbody2D.velocity.y * .5f);
         }

@@ -9,10 +9,15 @@ public class WatchingDownAndUp : MonoBehaviour
     private Vector2 _standartPos;
     private Player inputActions;
     private Animator _animator;
+    private LookingDown _lookingDown;
+
+    public bool isDashing;
 
     private void OnEnable()
     {
         _animator = GetComponentInParent<Animator>();
+
+        _lookingDown = LookingDown.Standart;
 
         _standartPos = transform.localPosition;
 
@@ -20,10 +25,10 @@ public class WatchingDownAndUp : MonoBehaviour
         inputActions.Enable();
 
         inputActions.PlayerInput.LookUp.performed += ctx => StartCoroutine(LookUp());
-        inputActions.PlayerInput.LookUp.canceled += ctx => LookUpStop();
+        inputActions.PlayerInput.LookUp.canceled += ctx => ResetCamPos();
 
         inputActions.PlayerInput.LookDown.performed += ctx => StartCoroutine(LookDown());
-        inputActions.PlayerInput.LookDown.canceled += ctx => LookDownStop();
+        inputActions.PlayerInput.LookDown.canceled += ctx => ResetCamPos();
     }
 
     private void OnDisable()
@@ -33,53 +38,61 @@ public class WatchingDownAndUp : MonoBehaviour
 
     public IEnumerator LookUp()
     {
-        if (_animator.GetBool("isRunning"))
+        if (_animator.GetBool("isRunning") || isDashing)
+            yield break;
+
+        _lookingDown = LookingDown.Up;
+
+        yield return new WaitForSeconds(_lookingCooldown);
+
+        if (_lookingDown != LookingDown.Up)
+            yield break;
+
+        if (_animator.GetBool("isRunning") || isDashing)
+            yield break;
+
+        if (_animator.GetBool("watchDown"))
             yield break;
 
         _animator.SetBool("watchUp", true);
         _animator.SetTrigger("Watch Up");
 
-        yield return new WaitForSeconds(_lookingCooldown);
-
-        if (!_animator.GetBool("watchUp"))
-            yield break;
-
         transform.position = _targetUp.position;
-    }
-
-    public void LookUpStop()
-    {
-        _animator.SetBool("watchUp", false);
-
-        transform.localPosition = _standartPos;
     }
 
     public IEnumerator LookDown()
     {
-        if (_animator.GetBool("isRunning"))
+        if (_animator.GetBool("isRunning") || isDashing)
+            yield break;
+
+        _lookingDown = LookingDown.Down;
+
+        yield return new WaitForSeconds(_lookingCooldown);
+
+        if (_lookingDown != LookingDown.Down)
+            yield break;
+
+        if (_animator.GetBool("watchUp"))
             yield break;
 
         _animator.SetBool("watchDown", true);
         _animator.SetTrigger("Watch Down");
 
-        yield return new WaitForSeconds(_lookingCooldown);
-
-        if (!_animator.GetBool("watchDown"))
-            yield break;
-
         transform.position = _targetDown.position;
-    }
-
-    public void LookDownStop()
-    {
-        transform.localPosition = _standartPos;
-
-        _animator.SetBool("watchDown", false);
     }
 
     public void ResetCamPos()
     {
+        _lookingDown = LookingDown.Standart;
+
+        _animator.SetBool("watchDown", false);
+        _animator.SetBool("watchUp", false);
+
         transform.localPosition = _standartPos; 
     }
 
+}
+public enum LookingDown
+{
+    Up, Down, Standart
 }
