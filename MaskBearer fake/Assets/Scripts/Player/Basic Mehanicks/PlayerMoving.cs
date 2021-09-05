@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class PlayerMoving : MonoBehaviour
 {
     [SerializeField] private float _movingMaxSpeed, _movingAddingSpeed, _stoppingLinearDrag, _jumpForce;
-    [SerializeField] private UnityEvent OnStartRunning;
+    [SerializeField] private UnityEvent OnStartMoving;
     private Rigidbody2D _rigidbody2D;
     private Player _inputActions;
     private bool _isMoving;
@@ -83,6 +83,8 @@ public class PlayerMoving : MonoBehaviour
     {
         if (_groundCheck.isGrounded && !isDashing)
         {
+            OnStartMoving.Invoke();
+
             _rigidbody2D.drag = 0;
 
             _groundCheck.isGrounded = false;
@@ -106,7 +108,7 @@ public class PlayerMoving : MonoBehaviour
 
         _isMoving = true;
 
-        OnStartRunning.Invoke();
+        OnStartMoving.Invoke();
 
         if (input > .01f)
         {

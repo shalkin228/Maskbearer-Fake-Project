@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerCombat : MonoBehaviour
 {
     [SerializeField] private int _damage;
     [SerializeField] private Transform _hitPoint;
     [SerializeField] private float _hitPointRadius, _coolDown, _linearStoppingDrag;
+    [SerializeField] private UnityEvent OnStartHit;
     private Player _inputActions;
     private Animator _animator;
     private bool _canHit = true;
@@ -31,6 +33,8 @@ public class PlayerCombat : MonoBehaviour
     {
         if (!_canHit)
             return;
+
+        OnStartHit.Invoke();
 
         Collider2D[] collidingObjects =
             Physics2D.OverlapCircleAll(_hitPoint.position, _hitPointRadius);
