@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerDash : MonoBehaviour
 {
     [SerializeField] private AnimationCurve _dashCurve;
     [SerializeField] private float _dashCooldown;
+    [SerializeField] private UnityEvent OnStartDash;
     private Player _inputActions;
     private bool _isDashing, _canDash;
     private float _timer;
@@ -68,6 +70,8 @@ public class PlayerDash : MonoBehaviour
     {
         if (!_canDash || _isDashing)
             return;
+
+        OnStartDash.Invoke();
 
         _isDashing = true;
         _timer = 0;
