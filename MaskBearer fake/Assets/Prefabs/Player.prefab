@@ -46,6 +46,7 @@ MonoBehaviour:
   _targetUp: {fileID: 6307499061809638505}
   _targetDown: {fileID: 6307499060570959390}
   _lookingCooldown: 0
+  isDashing: 0
 --- !u!1 &6307499060570959389
 GameObject:
   m_ObjectHideFlags: 0
@@ -134,21 +135,9 @@ MonoBehaviour:
   _movingAddingSpeed: 0.8
   _stoppingLinearDrag: 13
   _jumpForce: 20
-  OnStartRunning:
+  OnStartMoving:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6307499060530900181}
-        m_TargetAssemblyTypeName: WatchingDownAndUp, Assembly-CSharp
-        m_MethodName: ResetCamPos
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   isDashing: 0
 --- !u!70 &6307499060823251273
 CapsuleCollider2D:
@@ -223,6 +212,9 @@ MonoBehaviour:
   _hitPointRadius: 1.55
   _coolDown: 0.3
   _linearStoppingDrag: 22
+  OnStartHit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &6307499060823246518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -260,6 +252,9 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _dashCooldown: 0.5
+  OnStartDash:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &6307499060853693283
 GameObject:
   m_ObjectHideFlags: 0
