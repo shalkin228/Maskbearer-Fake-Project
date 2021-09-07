@@ -9,7 +9,7 @@ public class PlayerMoving : MonoBehaviour
     [SerializeField] private UnityEvent OnStartMoving;
     private Rigidbody2D _rigidbody2D;
     private Player _inputActions;
-    private bool _isMoving;
+    private bool _isMoving, _isFlipping;
     private Direction _dir;
     private GroundCheck _groundCheck;
     private Animator _animator;
@@ -42,6 +42,9 @@ public class PlayerMoving : MonoBehaviour
 
     private void Update()
     {
+        _animator.SetFloat("VelocityY", _rigidbody2D.velocity.y);
+        _animator.SetBool("IsGrounded", _groundCheck.isGrounded);
+
         if (_isMoving && _dir == Direction.Right && !isDashing)
         {
             _rigidbody2D.drag = 0f;
@@ -49,7 +52,11 @@ public class PlayerMoving : MonoBehaviour
                 _rigidbody2D.velocity = new Vector2
                     (_rigidbody2D.velocity.x + _movingAddingSpeed, _rigidbody2D.velocity.y);
 
-            transform.rotation = Quaternion.identity;
+            if(transform.rotation != Quaternion.identity && !_isFlipping)
+            {
+                _animator.SetTrigger("Turn");
+                _isFlipping = true;
+            }
         }
         else if (_isMoving && _dir == Direction.Left && !isDashing)
         {
@@ -58,7 +65,11 @@ public class PlayerMoving : MonoBehaviour
                 _rigidbody2D.velocity = new Vector2
                     (_rigidbody2D.velocity.x + -_movingAddingSpeed, _rigidbody2D.velocity.y);
 
-            transform.rotation = new Quaternion(0, 180, 0, 0);
+            if (transform.rotation != new Quaternion(0, 180, 0, 0) && !_isFlipping)
+            {
+                _animator.SetTrigger("Turn");
+                _isFlipping = true;
+            }
         }
         else if (_groundCheck.isGrounded)
         {
@@ -85,6 +96,8 @@ public class PlayerMoving : MonoBehaviour
         {
             OnStartMoving.Invoke();
 
+            _animator.SetTrigger("Jump");
+
             _rigidbody2D.drag = 0;
 
             _groundCheck.isGrounded = false;
@@ -110,11 +123,11 @@ public class PlayerMoving : MonoBehaviour
 
         OnStartMoving.Invoke();
 
-        if (input > .01f)
+        if (input > .01f && !_isFlipping)
         {
             _dir = Direction.Right;
         }
-        else if (input < -.01f)
+        else if (input < -.01f && !_isFlipping)
         {
             _dir = Direction.Left;
         }
@@ -123,6 +136,20 @@ public class PlayerMoving : MonoBehaviour
     public void StopMove()
     {
         _isMoving = false;
+    }
+
+    public void Flip()
+    {
+        _isFlipping = false;
+
+        if (_dir == Direction.Right)
+        {
+            transform.rotation = Quaternion.identity;
+        }
+        else
+        {
+            transform.rotation = new Quaternion(0, 180, 0, 0);
+        }
     }
 
 }
