@@ -92,8 +92,11 @@ public class PlayerMoving : MonoBehaviour
 
     public void Jump()
     {
-        if (_groundCheck.isGrounded && !isDashing)
+        if (_groundCheck.isGrounded)
         {
+            _isFlipping = false;
+            Flip();
+
             OnStartMoving.Invoke();
 
             _animator.SetTrigger("Jump");
@@ -123,11 +126,11 @@ public class PlayerMoving : MonoBehaviour
 
         OnStartMoving.Invoke();
 
-        if (input > .01f && !_isFlipping)
+        if (input > .01f)
         {
             _dir = Direction.Right;
         }
-        else if (input < -.01f && !_isFlipping)
+        else if (input < -.01f)
         {
             _dir = Direction.Left;
         }
