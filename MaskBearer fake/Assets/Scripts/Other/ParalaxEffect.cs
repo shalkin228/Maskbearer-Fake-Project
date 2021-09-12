@@ -5,13 +5,14 @@ using UnityEngine;
 public class ParalaxEffect : MonoBehaviour
 {
     [SerializeField] private float paralaxEffect;
-    [SerializeField] private Transform cam;
     [SerializeField] private ParalaxDirection parDir;
 
+    private Transform cam;
     private Vector3 oldCamPos;
 
     private void Start()
     {
+        cam = Camera.main.transform;
         oldCamPos = cam.position;
     }
 
