@@ -33,6 +33,11 @@ public class PlayerCombat : MonoBehaviour
     {
         if (!_canHit)
             return;
+        if (GetComponent<PlayerMoving>().isFlipping)
+        {
+            GetComponent<PlayerMoving>().isFlipping = false;
+            GetComponent<PlayerMoving>().Flip();
+        }
 
         OnStartHit.Invoke();
 

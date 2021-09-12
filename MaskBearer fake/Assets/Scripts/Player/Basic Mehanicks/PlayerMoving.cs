@@ -9,12 +9,14 @@ public class PlayerMoving : MonoBehaviour
     [SerializeField] private UnityEvent OnStartMoving;
     private Rigidbody2D _rigidbody2D;
     private Player _inputActions;
-    private bool _isMoving, _isFlipping;
+    private bool _isMoving;
     private Direction _dir;
     private GroundCheck _groundCheck;
     private Animator _animator;
 
+    public bool isFlipping;
     public bool isDashing;
+    public bool canInput;
 
     private void Start()
     {
@@ -52,10 +54,10 @@ public class PlayerMoving : MonoBehaviour
                 _rigidbody2D.velocity = new Vector2
                     (_rigidbody2D.velocity.x + _movingAddingSpeed, _rigidbody2D.velocity.y);
 
-            if(transform.rotation != Quaternion.identity && !_isFlipping)
+            if(transform.rotation != Quaternion.identity && !isFlipping)
             {
                 _animator.SetTrigger("Turn");
-                _isFlipping = true;
+                isFlipping = true;
             }
         }
         else if (_isMoving && _dir == Direction.Left && !isDashing)
@@ -65,10 +67,10 @@ public class PlayerMoving : MonoBehaviour
                 _rigidbody2D.velocity = new Vector2
                     (_rigidbody2D.velocity.x + -_movingAddingSpeed, _rigidbody2D.velocity.y);
 
-            if (transform.rotation != new Quaternion(0, 180, 0, 0) && !_isFlipping)
+            if (transform.rotation != new Quaternion(0, 180, 0, 0) && !isFlipping)
             {
                 _animator.SetTrigger("Turn");
-                _isFlipping = true;
+                isFlipping = true;
             }
         }
         else if (_groundCheck.isGrounded)
@@ -86,15 +88,13 @@ public class PlayerMoving : MonoBehaviour
         {
             _rigidbody2D.drag = 0;
         }
-
-        _animator.SetBool("isRunning", Mathf.Abs(_rigidbody2D.velocity.x) > 0.1f);
     }
 
     public void Jump()
     {
-        if (_groundCheck.isGrounded)
+        if (_groundCheck.isGrounded && canInput)
         {
-            _isFlipping = false;
+            isFlipping = false;
             Flip();
 
             OnStartMoving.Invoke();
@@ -122,6 +122,11 @@ public class PlayerMoving : MonoBehaviour
         if (Mathf.Abs(input) < .3f)
             return;
 
+        if (!canInput)
+            return;
+
+        _animator.SetBool("isRunning", true);
+
         _isMoving = true;
 
         OnStartMoving.Invoke();
@@ -138,12 +143,17 @@ public class PlayerMoving : MonoBehaviour
 
     public void StopMove()
     {
+        if (!canInput)
+            return;
+
         _isMoving = false;
+
+        _animator.SetBool("isRunning", false);
     }
 
     public void Flip()
     {
-        _isFlipping = false;
+        isFlipping = false;
 
         if (_dir == Direction.Right)
         {
@@ -153,6 +163,36 @@ public class PlayerMoving : MonoBehaviour
         {
             transform.rotation = new Quaternion(0, 180, 0, 0);
         }
+    }
+
+    public void InputBlockAndGoingDirection(AfterTransitionsDirection dir, float movingTime)
+    {
+        if(dir == AfterTransitionsDirection.GoRight)
+        {
+            _dir = Direction.Right;
+        }
+        if (dir == AfterTransitionsDirection.GoLeft)
+        {
+            _dir = Direction.Left;
+        }
+        canInput = false;
+        _isMoving = true;
+        GetComponent<PlayerDash>()._canDash = false;
+
+        _animator.SetBool("isRunning", true);
+
+        StartCoroutine
+            (InputBlockAndGoingDirectionCorrutine(dir, movingTime));
+    }
+
+    public IEnumerator InputBlockAndGoingDirectionCorrutine(AfterTransitionsDirection dir, float movingTime)
+    {
+        yield return new WaitForSeconds(movingTime);
+        canInput = true;
+        _isMoving = false;
+        GetComponent<PlayerDash>()._canDash = true;
+
+        _animator.SetBool("isRunning", false);
     }
 
 }

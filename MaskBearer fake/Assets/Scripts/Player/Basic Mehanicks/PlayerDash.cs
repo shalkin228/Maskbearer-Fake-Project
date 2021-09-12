@@ -9,9 +9,11 @@ public class PlayerDash : MonoBehaviour
     [SerializeField] private float _dashCooldown;
     [SerializeField] private UnityEvent OnStartDash;
     private Player _inputActions;
-    private bool _isDashing, _canDash;
+    private bool _isDashing;
     private float _timer;
     private Rigidbody2D _rigidbody2D;
+
+    public bool _canDash;
 
     private void OnEnable()
     {
